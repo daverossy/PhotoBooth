@@ -23,6 +23,7 @@ Message = ""  # Message is a fullscreen message
 SmallMessage = ""  # SmallMessage is a lower banner message
 TotalImageCount = 1  # Counter for Display and to monitor paper usage
 PhotosPerCart = 16  # Selphy takes 16 sheets per tray
+background_template_location = "/home/pi/Desktop/template.jpg"
 
 # initialise pygame
 pygame.mixer.pre_init(44100, -16, 1, 1024 * 3)  # PreInit Music, plays faster
@@ -158,163 +159,76 @@ def main(threadName, *args):
         subimagecounter = 0
     # Increment the image number
     imagecounter = imagecounter + 1
-    # Initialise countdown variable to 5
-    countdown = 5
 
-    while countdown > 0:
-        # Display the countdown number
-        Numeral = countdown
+    # Initialise number of shots variable
+    shotscountdown = 4
+    #
+    im = {}
+
+    while shotscountdown > 0:
+        # Initialise countdown variable to 5
+        countdown = 5
+
+        while countdown > 0:
+            # Display the countdown number
+            Numeral = countdown
+            UpdateDisplay()
+            # Subtract 1 from countdown each increment
+            countdown - 1
+            # Flash the light at half second intervals
+            timepulse = 0.5
+            # Wait 1 second between beeps
+            time.sleep(1)
+
+        Numeral = ""
+        Message = "Smile!"
+        # Update display
         UpdateDisplay()
-        # Subtract 1 from countdown each increment
-        countdown - 1
-        # Flash the light at half second intervals
-        timepulse = 0.5
-        # Wait 1 second between beeps
-        time.sleep(1)
-
-    Numeral = ""
-    Message = "Smile!"
-    # Update display
-    UpdateDisplay()
-    # increment the subimage
-    subimagecounter = subimagecounter + 1
-    # create the filename
-    filename = 'image'
-    filename += `imagecounter`
-    filename += '_'
-    filename += `subimagecounter`
-    filename += '.jpg'
-    # capture the image
-    camera.capture(os.path.join(imagefolder, filename))
-    # create an image object
-    im = PIL.Image.open(os.path.join(imagefolder, filename)).transpose(Image.FLIP_LEFT_RIGHT)
-    Message = "Get Ready"
-    UpdateDisplay()
-    timepulse = 999
-    time.sleep(3)
-
-    Message = ""
-
-    # Initialise countdown variable to 5
-    countdown = 5
-
-    while countdown > 0:
-        # Display the countdown number
-        Numeral = countdown
+        # increment the subimage
+        subimagecounter = subimagecounter + 1
+        # create the filename
+        filename = 'image'
+        filename += `imagecounter`
+        filename += '_'
+        filename += `subimagecounter`
+        filename += '.jpg'
+        # capture the image
+        camera.capture(os.path.join(imagefolder, filename))
+        # create an image object
+        im[shotscountdown] = PIL.Image.open(os.path.join(imagefolder, filename)).transpose(Image.FLIP_LEFT_RIGHT)
+        Message = "Get Ready"
         UpdateDisplay()
-        # Subtract 1 from countdown each increment
-        countdown - 1
-        # Flash the light at half second intervals
-        timepulse = 0.5
-        # Wait 1 second between beeps
-        time.sleep(1)
+        timepulse = 999
+        time.sleep(3)
 
-    Numeral = ""
-    Message = "Smile!"
-    UpdateDisplay()
+        Message = ""
+        shotscountdown + 1
 
-    subimagecounter = subimagecounter + 1
-
-    filename = 'image'
-    filename += `imagecounter`
-    filename += '_'
-    filename += `subimagecounter`
-    filename += '.jpg'
-    camera.capture(os.path.join(imagefolder, filename))
-    im2 = PIL.Image.open(os.path.join(imagefolder, filename)).transpose(Image.FLIP_LEFT_RIGHT)
-    Message = "Another One"
-    UpdateDisplay()
-    timepulse = 999
-    time.sleep(3)
-
-    Message = ""
-
-    # Initialise countdown variable to 4
-    countdown = 5
-
-    while countdown > 0:
-        # Display the countdown number
-        Numeral = countdown
-        UpdateDisplay()
-        # Subtract 1 from countdown each increment
-        countdown - 1
-        # Flash the light at half second intervals
-        timepulse = 0.5
-        # Wait 1 second between beeps
-        time.sleep(1)
-
-    Numeral = ""
-    Message = "Smile!"
-    UpdateDisplay()
-
-    subimagecounter = subimagecounter + 1
-
-    filename = 'image'
-    filename += `imagecounter`
-    filename += '_'
-    filename += `subimagecounter`
-    filename += '.jpg'
-    camera.capture(os.path.join(imagefolder, filename))
-    im3 = PIL.Image.open(os.path.join(imagefolder, filename)).transpose(Image.FLIP_LEFT_RIGHT)
-    Message = "Final One!"
-    UpdateDisplay()
-    timepulse = 999
-    time.sleep(3)
-
-    Message = ""
-
-    # Initialise countdown variable to 4
-    countdown = 5
-
-    while countdown > 0:
-        # Display the countdown number
-        Numeral = countdown
-        UpdateDisplay()
-        # Subtract 1 from countdown each increment
-        countdown - 1
-        # Flash the light at half second intervals
-        timepulse = 0.5
-        # Wait 1 second between beeps
-        time.sleep(1)
-
-    Numeral = ""
-    Message = "Smile!"
-    UpdateDisplay()
-    subimagecounter = subimagecounter + 1
-
-    filename = 'image'
-    filename += `imagecounter`
-    filename += '_'
-    filename += `subimagecounter`
-    filename += '.jpg'
-    camera.capture(os.path.join(imagefolder, filename))
-    Message = "Working.."
-    UpdateDisplay()
-    im4 = PIL.Image.open(os.path.join(imagefolder, filename)).transpose(Image.FLIP_LEFT_RIGHT)
 
     # Load the background template
-    bgimage = PIL.Image.open("/home/pi/Desktop/template.jpg")
+    bgimage = PIL.Image.open(background_template_location)
     # thumbnail the 4 images
-    im.thumbnail((560, 400))
-    im2.thumbnail((560, 400))
-    im3.thumbnail((560, 400))
-    im4.thumbnail((560, 400))
+    im[4].thumbnail((560, 400))
+    im[3].thumbnail((560, 400))
+    im[2].thumbnail((560, 400))
+    im[1].thumbnail((560, 400))
     # paste the thumbnails to the background images
-    bgimage.paste(im, (15, 20))
-    bgimage.paste(im2, (15, 410))
-    bgimage.paste(im3, (15, 820))
-    bgimage.paste(im4, (15, 1230))
+    bgimage.paste(im[4], (15, 20))
+    bgimage.paste(im[3], (15, 410))
+    bgimage.paste(im[2], (15, 820))
+    bgimage.paste(im[1], (15, 1230))
     # two columns of 4
-    bgimage.paste(im, (620, 20))
-    bgimage.paste(im2, (620, 410))
-    bgimage.paste(im3, (620, 820))
-    bgimage.paste(im4, (620, 1230))
+    bgimage.paste(im[4], (620, 20))
+    bgimage.paste(im[3], (620, 410))
+    bgimage.paste(im[2], (620, 820))
+    bgimage.paste(im[1], (620, 1230))
+
     # Create the final filename
-    Final_Image_Name = os.path.join(imagefolder, "Final_" + `imagecounter` + ".jpg")
+    final__image__name = os.path.join(imagefolder, "Final_" + `imagecounter` + ".jpg")
     # Save it to the usb drive
     bgimage.save(os.path.join(imagefolder, "Final_" + `imagecounter` + ".jpg"))
     # Save a temp file, its faster to print from the pi than usb
-    bgimage.save('/home/pi/Desktop/tempprint.jpg')
+    bgimage.save('/tmp/tempprint.jpg')
 
     # Connect to cups and select printer 0
     conn = cups.Connection()
@@ -337,12 +251,13 @@ def main(threadName, *args):
         conn.enablePrinter(printer_name)
         UpdateDisplay()
 
-    conn.printFile(printer_name, '/home/pi/Desktop/tempprint.jpg', "PhotoBooth", {})
+    conn.printFile(printer_name, '/tmp/tempprint.jpg', "PhotoBooth", {})
     time.sleep(20)
 
     Message = ""
     UpdateDisplay()
     timepulse = 999
+
     # reset the shutter switch
     while input_value == False:
         input_value = gpio.input(22)
@@ -353,5 +268,5 @@ def main(threadName, *args):
     Thread(target=main, args=('Main', 1)).start()
     # launch the pulse thread
     Thread(target=pulse, args=('Pulse', 1)).start()
-    # sleap
+    # sleep
     time.sleep(5)
