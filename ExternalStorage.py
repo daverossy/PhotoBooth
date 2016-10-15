@@ -1,4 +1,7 @@
-def ExternalStorage():
+import os
+
+
+def Initialize():
     Message = "USB Check..."
     return Message
     UpdateDisplay(PhotosPerCart)
@@ -18,3 +21,20 @@ def ExternalStorage():
                 # If a photobooth folder on the usb doesn't exist create it
                 if not os.path.isdir(imagefolder):
                     os.makedirs(imagefolder)
+
+
+def FolderCheck():
+    # Procedure checks if a numerical folder exists, if it does pick the next number
+    # each start gets a new folder i.e. /photobooth/1/ etc
+    notfound = True
+    folderno = 1
+    while notfound:
+        tmppath = os.path.join(imagefolder, `folderno`)
+        if not os.path.isdir(tmppath):
+            os.makedirs(tmppath)
+            imagefolder = tmppath
+            notfound = False
+        else:
+            folderno = folderno + 1
+
+    imagecounter = 0

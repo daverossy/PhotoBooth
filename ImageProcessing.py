@@ -1,3 +1,6 @@
+import PIL
+import os
+
 def ImageProcessing(im):
     # Load the background template
     bgimage = PIL.Image.open(background_template_location)

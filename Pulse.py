@@ -1,3 +1,6 @@
+import time
+
+
 # Pulse Thread - Used to pulse the LED without slowing down the rest
 def pulse(threadName, *args):
     global gpio

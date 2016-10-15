@@ -1,3 +1,6 @@
+import pygame
+
+
 # UpdateDisplay - Thread to update the display, neat generic procedure
 def UpdateDisplay(PhotosPerCart):
     # init global variables from main thread

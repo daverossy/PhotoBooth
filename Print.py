@@ -1,3 +1,6 @@
+import cups
+import UpdateDisplay
+
 def Print(TotalImageCount, printer_name):
     # Connect to cups and select printer 0
     conn = cups.Connection()
@@ -27,3 +30,25 @@ def Print(TotalImageCount, printer_name):
 
     conn.printFile(printer_name, '/tmp/tempprint.jpg', "PhotoBooth", {})
     time.sleep(20)
+
+
+def Reprint():
+    # Open a connection to cups
+    conn = cups.Connection()
+    # get a list of printers
+    printers = conn.getPrinters()
+    # select printer 0
+    printer_name = printers.keys()[0]
+    Message = "Re-Print..."
+    UpdateDisplay(PhotosPerCart)
+    # print the buffer file
+    printqueuelength = len(conn.getJobs())
+    if printqueuelength > 1:
+        Message = "PRINT ERROR"
+        conn.enablePrinter(printer_name)
+        UpdateDisplay(PhotosPerCart)
+    elif printqueuelength == 1:
+        SmallMessage = "Print Queue Full!"
+        UpdateDisplay(PhotosPerCart)
+        conn.enablePrinter(printer_name)
+    conn.printFile(printer_name, '/home/pi/Desktop/tempprint.jpg', "PhotoBooth", {})
