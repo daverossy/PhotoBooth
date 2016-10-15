@@ -1,5 +1,5 @@
 # UpdateDisplay - Thread to update the display, neat generic procedure
-def UpdateDisplay():
+def UpdateDisplay(PhotosPerCart):
     # init global variables from main thread
     global Numeral
     global Message

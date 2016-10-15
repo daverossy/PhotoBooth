@@ -12,6 +12,7 @@ from threading import Thread
 # Imports from broken out functions
 from UpdateDisplay import UpdateDisplay
 from Pulse import pulse
+from Print import Print
 
 # initialise global variables
 closeme = True  # Loop Control Variable
@@ -46,7 +47,7 @@ def main(threadName, *args):
     global Message
 
     Message = "Loading..."
-    UpdateDisplay()
+    UpdateDisplay(PhotosPerCart)
     time.sleep(5)  # 5 Second delay to allow USB to mount
 
     # Initialise the camera object
@@ -66,7 +67,7 @@ def main(threadName, *args):
     camera.start_preview()
 
     Message = "USB Check..."
-    UpdateDisplay()
+    UpdateDisplay(PhotosPerCart)
 
     # Following is a check to see there is a USB mounted if not it loops with a USB message
     usbcheck = False
@@ -86,7 +87,7 @@ def main(threadName, *args):
 
     Message = "Initialise"
 
-    UpdateDisplay()
+    UpdateDisplay(PhotosPerCart)
 
     # Procedure checks if a numerical folder exists, if it does pick the next number
     # each start gets a new folder i.e. /photobooth/1/ etc
@@ -104,7 +105,7 @@ def main(threadName, *args):
     imagecounter = 0
 
     Message = ""
-    UpdateDisplay()
+    UpdateDisplay(PhotosPerCart)
 
     # Main Loop
     while closeme:
@@ -125,7 +126,7 @@ def main(threadName, *args):
         gpio.setup(24, gpio.IN)
         input_value2 = gpio.input(24)
 
-    UpdateDisplay()
+    UpdateDisplay(PhotosPerCart)
 
     # Reprint Button has been pressed
     if input_value2 == False:
@@ -138,21 +139,21 @@ def main(threadName, *args):
             # select printer 0
             printer_name = printers.keys()[0]
             Message = "Re-Print..."
-            UpdateDisplay()
+            UpdateDisplay(PhotosPerCart)
             # print the buffer file
             printqueuelength = len(conn.getJobs())
             if printqueuelength > 1:
                 Message = "PRINT ERROR"
                 conn.enablePrinter(printer_name)
-                UpdateDisplay()
+                UpdateDisplay(PhotosPerCart)
             elif printqueuelength == 1:
                 SmallMessage = "Print Queue Full!"
-                UpdateDisplay()
+                UpdateDisplay(PhotosPerCart)
                 conn.enablePrinter(printer_name)
             conn.printFile(printer_name, '/home/pi/Desktop/tempprint.jpg', "PhotoBooth", {})
             time.sleep(20)
             Message = ""
-            UpdateDisplay()
+            UpdateDisplay(PhotosPerCart)
 
     # input_value is the shutter release
     if input_value == False:
@@ -172,7 +173,7 @@ def main(threadName, *args):
         while countdown > 0:
             # Display the countdown number
             Numeral = countdown
-            UpdateDisplay()
+            UpdateDisplay(PhotosPerCart)
             # Subtract 1 from countdown each increment
             countdown - 1
             # Flash the light at half second intervals
@@ -183,7 +184,7 @@ def main(threadName, *args):
         Numeral = ""
         Message = "Smile!"
         # Update display
-        UpdateDisplay()
+        UpdateDisplay(PhotosPerCart)
         # increment the subimage
         subimagecounter = subimagecounter + 1
         # create the filename
@@ -197,7 +198,7 @@ def main(threadName, *args):
         # create an image object
         im[shotscountdown] = PIL.Image.open(os.path.join(imagefolder, filename)).transpose(Image.FLIP_LEFT_RIGHT)
         Message = "Get Ready"
-        UpdateDisplay()
+        UpdateDisplay(PhotosPerCart)
         timepulse = 999
         time.sleep(3)
 
@@ -230,43 +231,24 @@ def main(threadName, *args):
     # Save a temp file, its faster to print from the pi than usb
     bgimage.save('/tmp/tempprint.jpg')
 
-    # Connect to cups and select printer 0
-    conn = cups.Connection()
-    printers = conn.getPrinters()
-    printer_name = printers.keys()[0]
-
-    # Increment the large image counter
-    TotalImageCount = TotalImageCount + 1
-    Message = "Print..."
-    UpdateDisplay()
-    # print the file
-    printqueuelength = len(conn.getJobs())
-    # If multiple prints in the queue error
-    if printqueuelength > 1:
-        Message = "PRINT ERROR"
-        conn.enablePrinter(printer_name)
-        UpdateDisplay()
-    elif printqueuelength == 1:
-        SmallMessage = "Print Queue Full!"
-        conn.enablePrinter(printer_name)
-        UpdateDisplay()
-
-    conn.printFile(printer_name, '/tmp/tempprint.jpg', "PhotoBooth", {})
-    time.sleep(20)
-
+    # Call print function to print photos
+    Print(TotalImageCount, printer_name)
+    # Clear message variable
     Message = ""
-    UpdateDisplay()
+    # Update display
+    UpdateDisplay(PhotosPerCart)
+    # Set timepulse to 999
     timepulse = 999
 
-    # reset the shutter switch
+    # Reset the shutter switch
     while input_value == False:
         input_value = gpio.input(22)
-    # we are exiting so stop preview
+    # Stop preview
     camera.stop_preview()
 
-    # launch the main thread
+    # Launch main thread
     Thread(target=main, args=('Main', 1)).start()
-    # launch the pulse thread
+    # Launch pulse thread
     Thread(target=pulse, args=('Pulse', 1)).start()
-    # sleep
+    # Sleep for 5 seconds
     time.sleep(5)

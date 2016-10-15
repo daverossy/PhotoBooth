@@ -1,15 +1,11 @@
 # Pulse Thread - Used to pulse the LED without slowing down the rest
 def pulse(threadName, *args):
-    # gpio.setmode(gpio.BCM)
     global gpio
     gpio.setup(17, gpio.OUT)
 
-    # print timepulse
     while closeme:
         global LEDon
-
-        # print LEDon
-
+        # Print LED on
         if timepulse == 999:
             gpio.output(17, False)
             LEDon = True
