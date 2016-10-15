@@ -1,7 +1,6 @@
 import os
 import time
 import PIL.Image
-import cups
 import RPi.GPIO as gpio
 import pygame
 from PIL import Image
@@ -191,7 +190,7 @@ def main(threadName, *args):
         shotscountdown - 1
 
     # Call image processing function and pass in dictionary containing all images
-    ImageProcessing(im)
+    ImageProcessing(im, background_template_location)
 
     # Call print function to print photos
     Print(TotalImageCount, printer_name)

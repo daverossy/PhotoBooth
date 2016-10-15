@@ -1,7 +1,8 @@
 import PIL
 import os
 
-def ImageProcessing(im):
+
+def ImageProcessing(im, background_template_location):
     # Load the background template
     bgimage = PIL.Image.open(background_template_location)
     # thumbnail the 4 images
