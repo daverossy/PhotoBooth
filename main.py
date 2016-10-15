@@ -2,17 +2,20 @@ import os
 import time
 import PIL.Image
 import cups
-import picamera
 import RPi.GPIO as gpio
 import pygame
 from PIL import Image
 from pygame.locals import *
 from threading import Thread
+import picamera
 
 # Imports from broken out functions
 from UpdateDisplay import UpdateDisplay
 from Pulse import pulse
-from Print import Print
+import Print
+import ExternalStorage
+import ImageProcessing
+import Camera
 
 # initialise global variables
 closeme = True  # Loop Control Variable
@@ -50,40 +53,13 @@ def main(threadName, *args):
     UpdateDisplay(PhotosPerCart)
     time.sleep(5)  # 5 Second delay to allow USB to mount
 
-    # Initialise the camera object
-    camera = picamera.PiCamera()
-
-    # Transparency allows pigame to shine through
-    camera.preview_alpha = 120
-    camera.vflip = False
-    camera.hflip = True
-    camera.rotation = 90
-    camera.brightness = 45
-    camera.exposure_compensation = 6
-    camera.contrast = 8
-    camera.resolution = (1280, 720)
+    # Call Camera initialisation function
+    Camera.InitialiseCamera()
 
     # Start the preview
-    camera.start_preview()
+    Camera.StartPreview()
 
-    Message = "USB Check..."
-    UpdateDisplay(PhotosPerCart)
-
-    # Following is a check to see there is a USB mounted if not it loops with a USB message
-    usbcheck = False
-    rootdir = '/media/'
-
-    while not usbcheck:
-        dirs = os.listdir(rootdir)
-        for file in dirs:
-            folder = os.path.join(rootdir, file)
-            if not file == 'SETTINGS' and os.path.isdir(folder):
-                usbcheck = True
-                imagedrive = os.path.join(rootdir, file)
-                imagefolder = os.path.join(imagedrive, 'PhotoBooth')
-                # If a photobooth folder on the usb doesn't exist create it
-                if not os.path.isdir(imagefolder):
-                    os.makedirs(imagefolder)
+    ExternalStorage()
 
     Message = "Initialise"
 
@@ -194,7 +170,7 @@ def main(threadName, *args):
         filename += `subimagecounter`
         filename += '.jpg'
         # capture the image
-        camera.capture(os.path.join(imagefolder, filename))
+        Camera.Capture(imagefolder, filename)
         # create an image object
         im[shotscountdown] = PIL.Image.open(os.path.join(imagefolder, filename)).transpose(Image.FLIP_LEFT_RIGHT)
         Message = "Get Ready"
@@ -205,31 +181,7 @@ def main(threadName, *args):
         Message = ""
         shotscountdown + 1
 
-
-    # Load the background template
-    bgimage = PIL.Image.open(background_template_location)
-    # thumbnail the 4 images
-    im[4].thumbnail((560, 400))
-    im[3].thumbnail((560, 400))
-    im[2].thumbnail((560, 400))
-    im[1].thumbnail((560, 400))
-    # paste the thumbnails to the background images
-    bgimage.paste(im[4], (15, 20))
-    bgimage.paste(im[3], (15, 410))
-    bgimage.paste(im[2], (15, 820))
-    bgimage.paste(im[1], (15, 1230))
-    # two columns of 4
-    bgimage.paste(im[4], (620, 20))
-    bgimage.paste(im[3], (620, 410))
-    bgimage.paste(im[2], (620, 820))
-    bgimage.paste(im[1], (620, 1230))
-
-    # Create the final filename
-    final__image__name = os.path.join(imagefolder, "Final_" + `imagecounter` + ".jpg")
-    # Save it to the usb drive
-    bgimage.save(os.path.join(imagefolder, "Final_" + `imagecounter` + ".jpg"))
-    # Save a temp file, its faster to print from the pi than usb
-    bgimage.save('/tmp/tempprint.jpg')
+    ImageProcessing(im)
 
     # Call print function to print photos
     Print(TotalImageCount, printer_name)
@@ -244,7 +196,7 @@ def main(threadName, *args):
     while input_value == False:
         input_value = gpio.input(22)
     # Stop preview
-    camera.stop_preview()
+    Camera.StopPreview()
 
     # Launch main thread
     Thread(target=main, args=('Main', 1)).start()
