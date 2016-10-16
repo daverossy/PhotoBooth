@@ -40,11 +40,9 @@ background = background.convert()  # Convert it to a background
 
 # Main Thread
 def main(threadName, *args):
-
-
-# Setup GPIO pins
-gpio.setup(24, gpio.IN)  # Button on Pin 24 Reprints last image
-gpio.setup(22, gpio.IN)  # Button on Pin 22 is the shutter
+    # Setup GPIO pins
+    gpio.setup(24, gpio.IN)  # Button on Pin 24 Reprints last image
+    gpio.setup(22, gpio.IN)  # Button on Pin 22 is the shutter
 
 # Setup global variables
 global closeme
@@ -76,7 +74,7 @@ ExternalStorage.initialise()
 Message = "Initialise"
 
 # Update display to reflect message
-update_display(Message, PhotosPerCart)
+update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
 # Procedure checks if a numerical folder exists, if it does pick the next number
 # each start gets a new folder i.e. /photobooth/1/ etc
@@ -86,7 +84,7 @@ ExternalStorage.folder_check()
 Message = ""
 
 # Update display to reflect message
-update_display(Message, PhotosPerCart)
+update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
 # Main Loop
 while closeme:
@@ -108,7 +106,7 @@ while closeme:
     input_value2 = gpio.input(24)
 
 # Update display to reflect changes
-update_display(Message, PhotosPerCart)
+update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
 # Reprint Button has been pressed
 if input_value2 == False:
@@ -121,7 +119,7 @@ if input_value2 == False:
         # Set message to empty
         Message = ""
         # Update display to reflect changes
-        update_display(PhotosPerCart)
+        update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
 # input_value is the shutter release
 if input_value == False:
@@ -147,7 +145,7 @@ while shotscountdown > 0:
     while countdown > 0:
         # Display the countdown number
         Numeral = countdown
-        update_display(Message, PhotosPerCart)
+        update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
         # Subtract 1 from countdown each increment
         countdown - 1
         # Flash the light at half second intervals
@@ -160,7 +158,7 @@ while shotscountdown > 0:
     Message = "Smile!"
 
     # Update display
-    update_display(Message, PhotosPerCart)
+    update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
     # increment the subimage
     subimagecounter = subimagecounter + 1
@@ -182,7 +180,7 @@ while shotscountdown > 0:
     Message = "Get Ready"
 
     # Update display to reflect new message
-    update_display(Message, PhotosPerCart)
+    update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
     # Set timepulse to 999
     timepulse = 999
@@ -206,7 +204,7 @@ Print(TotalImageCount)
 Message = ""
 
 # Update display
-update_display(Message, PhotosPerCart)
+update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
 # Set timepulse to 999
 timepulse = 999
