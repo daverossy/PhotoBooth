@@ -34,7 +34,7 @@ def update_display(total_image_count, numeral, message, photos_per_cart, screen,
         background.blit(text, textpos)
 
     screen.blit(background, (0, 0))
-    pygame.draw.rect(screen, pygame.Color(86, 40, 115), (10, 10, 950, 60), 2)  # Draw the red outer box
+    pygame.draw.rect(screen, pygame.Color(86, 40, 115), (10, 10, 1780, 980), 2)  # Draw the red outer box
     pygame.display.flip()
 
     return

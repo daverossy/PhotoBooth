@@ -31,9 +31,8 @@ imagedriver = ""
 usbcheck = True
 
 # Initialise pygame
-pygame.mixer.pre_init(44100, -16, 1, 1024 * 3)  # PreInit Music, plays faster
 pygame.init()  # Initialise pygame
-screen = pygame.display.set_mode((800, 480), pygame.FULLSCREEN)  # Full screen 640x480
+screen = pygame.display.set_mode((1800, 1000), pygame.FULLSCREEN)  # Full screen 640x480
 background = pygame.Surface(screen.get_size())  # Create the background object
 background = background.convert()  # Convert it to a background
 
