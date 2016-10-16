@@ -78,7 +78,7 @@ update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, backgro
 
 # Procedure checks if a numerical folder exists, if it does pick the next number
 # each start gets a new folder i.e. /photobooth/1/ etc
-ExternalStorage.folder_check()
+ExternalStorage.folder_check(imagefolder)
 
 # Set message to empty
 Message = ""
@@ -144,7 +144,7 @@ while shotscountdown > 0:
     # Keep running until countdown for photo is 0
     while countdown > 0:
         # Display the countdown number
-        Numeral = countdown
+        Numeral = str(countdown)
         update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
         # Subtract 1 from countdown each increment
         countdown - 1
@@ -153,46 +153,57 @@ while shotscountdown > 0:
         # Wait 1 second between beeps
         time.sleep(1)
 
-    Numeral = ""
+        Numeral = ""
 
-    Message = "Smile!"
+        if shotscountdown == 5:
+            Message = "First Photo!"
+        elif shotscountdown == 4:
+            Message = "Second Photo!"
+        elif shotscountdown == 3:
+            Message = "Third Photo!"
+        elif shotscountdown == 2:
+            Message = "Forth Photo!"
+        elif shotscountdown == 1:
+            Message = "Last Photo!"
+        else:
+            exit()
 
-    # Update display
-    update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
+        # Update display
+        update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
-    # increment the subimage
-    subimagecounter = subimagecounter + 1
+        # increment the subimage
+        subimagecounter = subimagecounter + 1
 
-    # create the filename
-    filename = 'image'
-    filename += `imagecounter`
-    filename += '_'
-    filename += `subimagecounter`
-    filename += '.jpg'
+        # create the filename
+        filename = 'image'
+        filename += `imagecounter`
+        filename += '_'
+        filename += `subimagecounter`
+        filename += '.jpg'
 
-    # Capture image
-    Camera.capture(imagefolder, filename)
+        # Capture image
+        Camera.capture(imagefolder, filename)
 
-    # Add an image element to the dictionary
-    im[shotscountdown] = PIL.Image.open(os.path.join(imagefolder, filename)).transpose(Image.FLIP_LEFT_RIGHT)
+        # Add an image element to the dictionary
+        im[shotscountdown] = PIL.Image.open(os.path.join(imagefolder, filename)).transpose(Image.FLIP_LEFT_RIGHT)
 
-    # Set message to get ready
-    Message = "Get Ready"
+        # Set message to get ready
+        Message = "Get Ready"
 
-    # Update display to reflect new message
-    update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
+        # Update display to reflect new message
+        update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
-    # Set timepulse to 999
-    timepulse = 999
+        # Set timepulse to 999
+        timepulse = 999
 
-    # Wait for 3 seconds
-    time.sleep(3)
+        # Wait for 3 seconds
+        time.sleep(3)
 
-    # Set message to empty
-    Message = ""
+        # Set message to empty
+        Message = ""
 
-    # Minus 1 off the amount of shots left
-    shotscountdown - 1
+        # Minus 1 off the amount of shots left
+        shotscountdown - 1
 
 # Call image processing function and pass in dictionary containing all images
 ImageProcessing(im, background_template_location, imagefolder, imagecounter)

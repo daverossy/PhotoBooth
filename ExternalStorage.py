@@ -26,7 +26,7 @@ def initialise():
     return
 
 
-def folder_check():
+def folder_check(imagefolder):
     # Procedure checks if a numerical folder exists, if it does pick the next number
     # each start gets a new folder i.e. /photobooth/1/ etc
     notfound = True
