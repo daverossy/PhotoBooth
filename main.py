@@ -137,73 +137,64 @@ shotscountdown = 4
 im = {}
 
 # Keep running until number of shots left is 0
-while shotscountdown > 0:
-    # Initialise countdown variable to 5
-    countdown = 5
-
+for shotscountdown in range(5, 1):
     # Keep running until countdown for photo is 0
-    while countdown > 0:
+    for countdown in range(5, 1):
         # Display the countdown number
         Numeral = str(countdown)
         update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
-        # Subtract 1 from countdown each increment
-        countdown - 1
         # Flash the light at half second intervals
         timepulse = 0.5
         # Wait 1 second between beeps
         time.sleep(1)
-
         Numeral = ""
 
-        if shotscountdown == 5:
-            Message = "First Photo!"
-        elif shotscountdown == 4:
-            Message = "Second Photo!"
-        elif shotscountdown == 3:
-            Message = "Third Photo!"
-        elif shotscountdown == 2:
-            Message = "Forth Photo!"
-        elif shotscountdown == 1:
-            Message = "Last Photo!"
-        else:
-            exit()
+    if shotscountdown == 5:
+        Message = "First Photo!"
+    elif shotscountdown == 4:
+        Message = "Second Photo!"
+    elif shotscountdown == 3:
+        Message = "Third Photo!"
+    elif shotscountdown == 2:
+        Message = "Forth Photo!"
+    elif shotscountdown == 1:
+        Message = "Last Photo!"
+    else:
+        exit()
 
-        # Update display
-        update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
+    # Update display
+    update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
-        # increment the subimage
-        subimagecounter = subimagecounter + 1
+    # increment the subimage
+    subimagecounter = subimagecounter + 1
 
-        # create the filename
-        filename = 'image'
-        filename += `imagecounter`
-        filename += '_'
-        filename += `subimagecounter`
-        filename += '.jpg'
+    # create the filename
+    filename = 'image'
+    filename += `imagecounter`
+    filename += '_'
+    filename += `subimagecounter`
+    filename += '.jpg'
 
-        # Capture image
-        Camera.capture(imagefolder, filename)
+    # Capture image
+    Camera.capture(imagefolder, filename)
 
-        # Add an image element to the dictionary
-        im[shotscountdown] = PIL.Image.open(os.path.join(imagefolder, filename)).transpose(Image.FLIP_LEFT_RIGHT)
+    # Add an image element to the dictionary
+    im[shotscountdown] = PIL.Image.open(os.path.join(imagefolder, filename)).transpose(Image.FLIP_LEFT_RIGHT)
 
-        # Set message to get ready
-        Message = "Get Ready"
+    # Set message to get ready
+    Message = "Get Ready"
 
-        # Update display to reflect new message
-        update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
+    # Update display to reflect new message
+    update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
-        # Set timepulse to 999
-        timepulse = 999
+    # Set timepulse to 999
+    timepulse = 999
 
-        # Wait for 3 seconds
-        time.sleep(3)
+    # Wait for 3 seconds
+    time.sleep(3)
 
-        # Set message to empty
-        Message = ""
-
-        # Minus 1 off the amount of shots left
-        shotscountdown - 1
+    # Set message to empty
+    Message = ""
 
 # Call image processing function and pass in dictionary containing all images
 ImageProcessing(im, background_template_location, imagefolder, imagecounter)
