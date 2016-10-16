@@ -1,10 +1,11 @@
 import os
+from UpdateDisplay import update_display
 
 
-def Initialize():
+def initialise():
     Message = "USB Check..."
     return Message
-    UpdateDisplay(PhotosPerCart)
+    update_display(PhotosPerCart)
 
     # Following is a check to see there is a USB mounted if not it loops with a USB message
     usbcheck = False
@@ -22,8 +23,10 @@ def Initialize():
                 if not os.path.isdir(imagefolder):
                     os.makedirs(imagefolder)
 
+    return
 
-def FolderCheck():
+
+def folder_check():
     # Procedure checks if a numerical folder exists, if it does pick the next number
     # each start gets a new folder i.e. /photobooth/1/ etc
     notfound = True
@@ -38,3 +41,5 @@ def FolderCheck():
             folderno = folderno + 1
 
     imagecounter = 0
+
+    return

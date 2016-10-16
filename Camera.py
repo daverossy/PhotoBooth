@@ -5,7 +5,8 @@ global camera
 # Initialise the camera object
 camera = picamera.PiCamera()
 
-def InitialiseCamera():
+
+def initialise_camera():
     # Transparency allows pigame to shine through
     camera.preview_alpha = 120
     camera.vflip = False
@@ -17,16 +18,19 @@ def InitialiseCamera():
     camera.resolution = (1280, 720)
     return
 
-def StartPreview():
+
+def start_preview():
     # Stop Preview
     camera.start_preview()
     return
 
-def StopPreview():
+
+def stop_preview():
     # Stop preview
     camera.stop_preview()
     return
 
-def Capture(imagefolder, filename):
+
+def capture(imagefolder, filename):
     camera.capture(os.path.join(imagefolder, filename))
     return

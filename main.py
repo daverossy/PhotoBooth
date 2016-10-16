@@ -8,7 +8,7 @@ from pygame.locals import *
 from threading import Thread
 
 # Imports from broken out functions
-from UpdateDisplay import UpdateDisplay
+from UpdateDisplay import update_display
 from Pulse import pulse
 import Print
 import ExternalStorage
@@ -26,6 +26,9 @@ SmallMessage = ""  # SmallMessage is a lower banner message
 TotalImageCount = 1  # Counter for Display and to monitor paper usage
 PhotosPerCart = 16  # Selphy takes 16 sheets per tray
 background_template_location = "/home/pi/Desktop/template.jpg"
+imagefolder = ""
+imagedriver = ""
+usbcheck = True
 
 # Initialise pygame
 pygame.mixer.pre_init(44100, -16, 1, 1024 * 3)  # PreInit Music, plays faster
@@ -53,35 +56,35 @@ def main(threadName, *args):
     Message = "Loading..."
 
     # Update display to reflect message
-    UpdateDisplay(Message, PhotosPerCart)
+    update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
     # 5 Second delay to allow USB to mount
     time.sleep(5)
 
     # Call camera initialisation function
-    Camera.InitialiseCamera()
+    Camera.initialise_camera()
 
     # Start camera preview
-    Camera.StartPreview()
+    Camera.start_preview()
 
     # Initialise the external storage
-    ExternalStorage.Initialize()
+    ExternalStorage.initialise()
 
     # Set message to initialise
     Message = "Initialise"
 
     # Update display to reflect message
-    UpdateDisplay(Message, PhotosPerCart)
+    update_display(Message, PhotosPerCart)
 
     # Procedure checks if a numerical folder exists, if it does pick the next number
     # each start gets a new folder i.e. /photobooth/1/ etc
-    ExternalStorage.FolderCheck()
+    ExternalStorage.folder_check()
 
     # Set message to empty
     Message = ""
 
     # Update display to reflect message
-    UpdateDisplay(Message, PhotosPerCart)
+    update_display(Message, PhotosPerCart)
 
     # Main Loop
     while closeme:
@@ -103,20 +106,20 @@ def main(threadName, *args):
         input_value2 = gpio.input(24)
 
     # Update display to reflect changes
-    UpdateDisplay(Message, PhotosPerCart)
+    update_display(Message, PhotosPerCart)
 
     # Reprint Button has been pressed
     if input_value2 == False:
         # If the temp image exists send it to the printer
         if os.path.isfile('/home/pi/Desktop/tempprint.jpg'):
             # Call reprint function
-            Print.Reprint()
+            Print.reprint()
             # Wait 20 seconds
             time.sleep(20)
             # Set message to empty
             Message = ""
             # Update display to reflect changes
-            UpdateDisplay(PhotosPerCart)
+            update_display(PhotosPerCart)
 
     # input_value is the shutter release
     if input_value == False:
@@ -140,7 +143,7 @@ def main(threadName, *args):
         while countdown > 0:
             # Display the countdown number
             Numeral = countdown
-            UpdateDisplay(Message, PhotosPerCart)
+            update_display(Message, PhotosPerCart)
             # Subtract 1 from countdown each increment
             countdown - 1
             # Flash the light at half second intervals
@@ -153,7 +156,7 @@ def main(threadName, *args):
         Message = "Smile!"
 
         # Update display
-        UpdateDisplay(Message, PhotosPerCart)
+        update_display(Message, PhotosPerCart)
 
         # increment the subimage
         subimagecounter = subimagecounter + 1
@@ -166,7 +169,7 @@ def main(threadName, *args):
         filename += '.jpg'
 
         # Capture image
-        Camera.Capture(imagefolder, filename)
+        Camera.capture(imagefolder, filename)
 
         # Add an image element to the dictionary
         im[shotscountdown] = PIL.Image.open(os.path.join(imagefolder, filename)).transpose(Image.FLIP_LEFT_RIGHT)
@@ -175,7 +178,7 @@ def main(threadName, *args):
         Message = "Get Ready"
 
         # Update display to reflect new message
-        UpdateDisplay(Message, PhotosPerCart)
+        update_display(Message, PhotosPerCart)
 
         # Set timepulse to 999
         timepulse = 999
@@ -190,7 +193,7 @@ def main(threadName, *args):
         shotscountdown - 1
 
     # Call image processing function and pass in dictionary containing all images
-    ImageProcessing(im, background_template_location)
+    ImageProcessing(im, background_template_location, imagefolder, imagecounter)
 
     # Call print function to print photos
     Print(TotalImageCount)
@@ -199,7 +202,7 @@ def main(threadName, *args):
     Message = ""
 
     # Update display
-    UpdateDisplay(Message, PhotosPerCart)
+    update_display(Message, PhotosPerCart)
 
     # Set timepulse to 999
     timepulse = 999
@@ -209,7 +212,7 @@ def main(threadName, *args):
         input_value = gpio.input(22)
 
     # Stop preview
-    Camera.StopPreview()
+    Camera.stop_preview()
 
     # Launch main thread
     Thread(target=main, args=('Main', 1)).start()

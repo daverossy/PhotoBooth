@@ -2,7 +2,7 @@ import PIL
 import os
 
 
-def ImageProcessing(im, background_template_location):
+def image_processing(im, background_template_location, imagefolder, imagecounter):
     # Load the background template
     bgimage = PIL.Image.open(background_template_location)
     # thumbnail the 4 images
@@ -27,3 +27,5 @@ def ImageProcessing(im, background_template_location):
     bgimage.save(os.path.join(imagefolder, "Final_" + `imagecounter` + ".jpg"))
     # Save a temp file, its faster to print from the pi than usb
     bgimage.save('/tmp/tempprint.jpg')
+
+    return
