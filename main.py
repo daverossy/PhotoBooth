@@ -174,17 +174,17 @@ for shotscountdown in range(1, 6):
     filename += `subimagecounter`
     filename += '.jpg'
 
-    # Capture image
-    Camera.capture(imagefolder, filename)
-
-    # Add an image element to the dictionary
-    im[shotscountdown] = PIL.Image.open(os.path.join(imagefolder, filename)).transpose(Image.FLIP_LEFT_RIGHT)
-
     # Set message to get ready
     Message = "Get Ready"
 
     # Update display to reflect new message
     update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
+
+    # Capture image
+    Camera.capture(imagefolder, filename)
+
+    # Add an image element to the dictionary
+    im[shotscountdown] = PIL.Image.open(os.path.join(imagefolder, filename)).transpose(Image.FLIP_LEFT_RIGHT)
 
     # Set timepulse to 999
     timepulse = 999

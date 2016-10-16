@@ -14,9 +14,9 @@ def update_display(total_image_count, numeral, message, photos_per_cart, screen,
     background.fill(pygame.Color("black"))  # Black background
     smallfont = pygame.font.Font(None, 50)  # Small font for banner message
     small_text = smallfont.render(small_text, 1, (86, 40, 115))
-    background.blit(small_text, (10, 445))  # Write the small text
+    background.blit(small_text, (1200, 920))  # Write the small text
     small_text = smallfont.render(`total_image_count` + "/" + `photos_per_cart`, 1, (86, 40, 115))
-    background.blit(small_text, (710, 445))  # Write the image counter
+    background.blit(small_text, (1710, 920))  # Write the image counter
 
     if message != "":  # If the big message exits write it
         font = pygame.font.Font(None, 180)
