@@ -13,28 +13,28 @@ def update_display(total_image_count, numeral, message, photos_per_cart, screen,
 
     background.fill(pygame.Color("black"))  # Black background
     smallfont = pygame.font.Font(None, 50)  # Small font for banner message
-    small_text = smallfont.render(small_text, 1, (255, 0, 0))
+    small_text = smallfont.render(small_text, 1, (86, 40, 115))
     background.blit(small_text, (10, 445))  # Write the small text
-    small_text = smallfont.render(`total_image_count` + "/" + `photos_per_cart`, 1, (255, 0, 0))
+    small_text = smallfont.render(`total_image_count` + "/" + `photos_per_cart`, 1, (86, 40, 115))
     background.blit(small_text, (710, 445))  # Write the image counter
 
     if message != "":  # If the big message exits write it
         font = pygame.font.Font(None, 180)
-        text = font.render(message, 1, (255, 0, 0))
+        text = font.render(message, 1, (86, 40, 115))
         textpos = text.get_rect()
         textpos.centerx = background.get_rect().centerx
         textpos.centery = background.get_rect().centery
         background.blit(text, textpos)
     elif numeral != "":  # Else if the number exists display it
         font = pygame.font.Font(None, 800)
-        text = font.render(numeral, 1, (255, 0, 0))
+        text = font.render(numeral, 1, (86, 40, 115))
         textpos = text.get_rect()
         textpos.centerx = background.get_rect().centerx
         textpos.centery = background.get_rect().centery
         background.blit(text, textpos)
 
     screen.blit(background, (0, 0))
-    pygame.draw.rect(screen, pygame.Color("red"), (10, 10, 770, 430), 2)  # Draw the red outer box
+    pygame.draw.rect(screen, pygame.Color(86, 40, 115), (10, 10, 950, 60), 2)  # Draw the red outer box
     pygame.display.flip()
 
     return
