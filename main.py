@@ -136,10 +136,10 @@ shotscountdown = 4
 # Define empty dictionary for image variable data
 im = {}
 
-# Keep running until number of shots left is 0
-for shotscountdown in range(5, 1):
+# Keep running until number of shots taken is 5
+for shotscountdown in range(1, 6):
     # Keep running until countdown for photo is 0
-    for countdown in range(5, 1):
+    for countdown in range(5, 0, -1):
         # Display the countdown number
         Numeral = str(countdown)
         update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
@@ -149,15 +149,15 @@ for shotscountdown in range(5, 1):
         time.sleep(1)
         Numeral = ""
 
-    if shotscountdown == 5:
+    if shotscountdown == 1:
         Message = "First Photo!"
-    elif shotscountdown == 4:
+    elif shotscountdown == 2:
         Message = "Second Photo!"
     elif shotscountdown == 3:
         Message = "Third Photo!"
-    elif shotscountdown == 2:
+    elif shotscountdown == 4:
         Message = "Forth Photo!"
-    elif shotscountdown == 1:
+    elif shotscountdown == 5:
         Message = "Last Photo!"
     else:
         exit()
