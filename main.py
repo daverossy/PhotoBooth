@@ -137,17 +137,6 @@ im = {}
 
 # Keep running until number of shots taken is 5
 for shotscountdown in range(1, 6):
-    # Keep running until countdown for photo is 0
-    for countdown in range(5, 0, -1):
-        # Display the countdown number
-        Numeral = str(countdown)
-        update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
-        # Flash the light at half second intervals
-        timepulse = 0.5
-        # Wait 1 second between beeps
-        time.sleep(1)
-        Numeral = ""
-
     if shotscountdown == 1:
         Message = "First Photo!"
     elif shotscountdown == 2:
@@ -166,6 +155,17 @@ for shotscountdown in range(1, 6):
 
     # Wait for 1 second
     time.sleep(1)
+
+    # Keep running until countdown for photo is 0
+    for countdown in range(5, 0, -1):
+        # Display the countdown number
+        Numeral = str(countdown)
+        update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
+        # Flash the light at half second intervals
+        timepulse = 0.5
+        # Wait 1 second between beeps
+        time.sleep(1)
+        Numeral = ""
 
     # increment the subimage
     subimagecounter = subimagecounter + 1
