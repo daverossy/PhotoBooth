@@ -164,6 +164,9 @@ for shotscountdown in range(1, 6):
     # Update display
     update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
+    # Wait for 1 second
+    time.sleep(1)
+
     # increment the subimage
     subimagecounter = subimagecounter + 1
 
@@ -180,6 +183,9 @@ for shotscountdown in range(1, 6):
     # Update display to reflect new message
     update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
+    # Wait for 2 seconds
+    time.sleep(2)
+
     # Capture image
     Camera.capture(imagefolder, filename)
 
@@ -188,9 +194,6 @@ for shotscountdown in range(1, 6):
 
     # Set timepulse to 999
     timepulse = 999
-
-    # Wait for 3 seconds
-    time.sleep(3)
 
     # Set message to empty
     Message = ""
