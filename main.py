@@ -156,6 +156,9 @@ for shotscountdown in range(1, 6):
     # Wait for 1 second
     time.sleep(1)
 
+    # Set message to be empty
+    Message = ""
+
     # Keep running until countdown for photo is 0
     for countdown in range(5, 0, -1):
         # Display the countdown number
@@ -178,13 +181,13 @@ for shotscountdown in range(1, 6):
     filename += '.jpg'
 
     # Set message to get ready
-    Message = "Get Ready"
+    Message = "Get Ready!"
 
     # Update display to reflect new message
     update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
     # Wait for 2 seconds
-    time.sleep(2)
+    time.sleep(1)
 
     # Capture image
     Camera.capture(imagefolder, filename)
