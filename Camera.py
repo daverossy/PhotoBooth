@@ -2,11 +2,10 @@ import picamera
 import os
 
 global camera
+# Initialise the camera object
+camera = picamera.PiCamera()
 
 def InitialiseCamera():
-    # Initialise the camera object
-    camera = picamera.PiCamera()
-
     # Transparency allows pigame to shine through
     camera.preview_alpha = 120
     camera.vflip = False
