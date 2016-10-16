@@ -1,7 +1,8 @@
 import cups
 import UpdateDisplay
 
-def Print(TotalImageCount, printer_name):
+
+def Print(TotalImageCount):
     # Connect to cups and select printer 0
     conn = cups.Connection()
     printers = conn.getPrinters()

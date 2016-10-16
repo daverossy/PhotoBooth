@@ -53,7 +53,7 @@ def main(threadName, *args):
     Message = "Loading..."
 
     # Update display to reflect message
-    UpdateDisplay(PhotosPerCart)
+    UpdateDisplay(Message, PhotosPerCart)
 
     # 5 Second delay to allow USB to mount
     time.sleep(5)
@@ -71,7 +71,7 @@ def main(threadName, *args):
     Message = "Initialise"
 
     # Update display to reflect message
-    UpdateDisplay(PhotosPerCart)
+    UpdateDisplay(Message, PhotosPerCart)
 
     # Procedure checks if a numerical folder exists, if it does pick the next number
     # each start gets a new folder i.e. /photobooth/1/ etc
@@ -81,7 +81,7 @@ def main(threadName, *args):
     Message = ""
 
     # Update display to reflect message
-    UpdateDisplay(PhotosPerCart)
+    UpdateDisplay(Message, PhotosPerCart)
 
     # Main Loop
     while closeme:
@@ -103,7 +103,7 @@ def main(threadName, *args):
         input_value2 = gpio.input(24)
 
     # Update display to reflect changes
-    UpdateDisplay(PhotosPerCart)
+    UpdateDisplay(Message, PhotosPerCart)
 
     # Reprint Button has been pressed
     if input_value2 == False:
@@ -140,7 +140,7 @@ def main(threadName, *args):
         while countdown > 0:
             # Display the countdown number
             Numeral = countdown
-            UpdateDisplay(PhotosPerCart)
+            UpdateDisplay(Message, PhotosPerCart)
             # Subtract 1 from countdown each increment
             countdown - 1
             # Flash the light at half second intervals
@@ -153,7 +153,7 @@ def main(threadName, *args):
         Message = "Smile!"
 
         # Update display
-        UpdateDisplay(PhotosPerCart)
+        UpdateDisplay(Message, PhotosPerCart)
 
         # increment the subimage
         subimagecounter = subimagecounter + 1
@@ -175,7 +175,7 @@ def main(threadName, *args):
         Message = "Get Ready"
 
         # Update display to reflect new message
-        UpdateDisplay(PhotosPerCart)
+        UpdateDisplay(Message, PhotosPerCart)
 
         # Set timepulse to 999
         timepulse = 999
@@ -193,13 +193,13 @@ def main(threadName, *args):
     ImageProcessing(im, background_template_location)
 
     # Call print function to print photos
-    Print(TotalImageCount, printer_name)
+    Print(TotalImageCount)
 
     # Clear message variable
     Message = ""
 
     # Update display
-    UpdateDisplay(PhotosPerCart)
+    UpdateDisplay(Message, PhotosPerCart)
 
     # Set timepulse to 999
     timepulse = 999

@@ -1,8 +1,9 @@
 import pygame
+import time
 
 
 # UpdateDisplay - Thread to update the display, neat generic procedure
-def UpdateDisplay(PhotosPerCart):
+def UpdateDisplay(Message, PhotosPerCart):
     # init global variables from main thread
     global Numeral
     global Message
@@ -45,5 +46,7 @@ def UpdateDisplay(PhotosPerCart):
     screen.blit(background, (0, 0))
     pygame.draw.rect(screen, pygame.Color("red"), (10, 10, 770, 430), 2)  # Draw the red outer box
     pygame.display.flip()
+
+    time.sleep(2)
 
     return
