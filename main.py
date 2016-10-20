@@ -202,7 +202,7 @@ for shotscountdown in range(1, 6):
     Message = ""
 
 # Call image processing function and pass in dictionary containing all images
-ImageProcessing(im, background_template_location, imagefolder, imagecounter)
+ImageProcessing.image_processing(im, background_template_location, imagefolder, imagecounter)
 
 # Call print function to print photos
 Print(TotalImageCount)
