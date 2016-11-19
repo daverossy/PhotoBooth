@@ -52,6 +52,8 @@ def main(threadName, *args):
     global SmallMessage
     global Message
 
+    subimagecounter = 0
+
     # Update message to loading
     Message = "Loading..."
 
