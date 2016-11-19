@@ -205,10 +205,11 @@ for shotscountdown in range(1, 6):
 ImageProcessing.image_processing(im, background_template_location, imagefolder, imagecounter)
 
 # Call print function to print photos
-Print(TotalImageCount)
+# Print function not required for this project so commented out
+# Print(TotalImageCount)
 
 # Clear message variable
-Message = ""
+Message = "All Done! Press button to start again!"
 
 # Update display
 update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)

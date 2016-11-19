@@ -13,8 +13,8 @@ def initialise_camera():
     camera.hflip = True
     camera.rotation = 90
     camera.brightness = 45
-    camera.exposure_compensation = 6
-    camera.contrast = 8
+    # camera.exposure_compensation = 6
+    # camera.contrast = 8
     camera.resolution = (1280, 720)
     return
 
