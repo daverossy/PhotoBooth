@@ -29,6 +29,7 @@ background_template_location = "/home/pi/Desktop/template.jpg"
 imagefolder = ""
 imagedriver = ""
 usbcheck = True
+subimagecounter = 0
 
 # Initialise pygame
 pygame.init()  # Initialise pygame
@@ -43,186 +44,186 @@ def main(threadName, *args):
     gpio.setup(24, gpio.IN)  # Button on Pin 24 Reprints last image
     gpio.setup(22, gpio.IN)  # Button on Pin 22 is the shutter
 
-# Setup global variables
-global closeme
-global timepulse
-global TotalImageCount
-global Numeral
-global SmallMessage
-global Message
+    # Setup global variables
+    global closeme
+    global timepulse
+    global TotalImageCount
+    global Numeral
+    global SmallMessage
+    global Message
 
-# Update message to loading
-Message = "Loading..."
+    # Update message to loading
+    Message = "Loading..."
 
-# Update display to reflect message
-update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
-
-# 5 Second delay to allow USB to mount
-time.sleep(5)
-
-# Call camera initialisation function
-Camera.initialise_camera()
-
-# Start camera preview
-Camera.start_preview()
-
-# Initialise the external storage
-ExternalStorage.initialise()
-
-# Set message to initialise
-Message = "Initialise"
-
-# Update display to reflect message
-update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
-
-# Procedure checks if a numerical folder exists, if it does pick the next number
-# each start gets a new folder i.e. /photobooth/1/ etc
-ExternalStorage.folder_check(imagefolder)
-
-# Set message to empty
-Message = ""
-
-# Update display to reflect message
-update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
-
-# Main Loop
-while closeme:
-    try:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                closeme = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    closeme = False
-    except KeyboardInterrupt:
-        closeme = False
-
-    # input_value is the shuttergp
-    gpio.setup(22, gpio.IN)
-    input_value = gpio.input(22)
-    # input_value2 is photo reprint
-    gpio.setup(24, gpio.IN)
-    input_value2 = gpio.input(24)
-
-# Update display to reflect changes
-update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
-
-# Reprint Button has been pressed
-if input_value2 == False:
-    # If the temp image exists send it to the printer
-    if os.path.isfile('/home/pi/Desktop/tempprint.jpg'):
-        # Call reprint function
-        Print.reprint()
-        # Wait 20 seconds
-        time.sleep(20)
-        # Set message to empty
-        Message = ""
-        # Update display to reflect changes
-        update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
-
-# input_value is the shutter release
-if input_value == False:
-    subimagecounter = 0
-
-imagecounter = 0
-
-# Increment the image number
-imagecounter + 1
-
-# Initialise number of shots variable
-shotscountdown = 4
-
-# Define empty dictionary for image variable data
-im = {}
-
-# Keep running until number of shots taken is 5
-for shotscountdown in range(1, 6):
-    if shotscountdown == 1:
-        Message = "First Photo!"
-    elif shotscountdown == 2:
-        Message = "Second Photo!"
-    elif shotscountdown == 3:
-        Message = "Third Photo!"
-    elif shotscountdown == 4:
-        Message = "Forth Photo!"
-    elif shotscountdown == 5:
-        Message = "Last Photo!"
-    else:
-        exit()
-
-    # Update display
+    # Update display to reflect message
     update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
-    # Wait for 1 second
-    time.sleep(1)
+    # 5 Second delay to allow USB to mount
+    time.sleep(5)
 
-    # Set message to be empty
-    Message = ""
+    # Call camera initialisation function
+    Camera.initialise_camera()
 
-    # Keep running until countdown for photo is 0
-    for countdown in range(5, 0, -1):
-        # Display the countdown number
-        Numeral = str(countdown)
-        update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
-        # Flash the light at half second intervals
-        timepulse = 0.5
-        # Wait 1 second between beeps
-        time.sleep(1)
-        Numeral = ""
+    # Start camera preview
+    Camera.start_preview()
 
-    # increment the subimage
-    subimagecounter = subimagecounter + 1
+    # Initialise the external storage
+    ExternalStorage.initialise()
 
-    # create the filename
-    filename = 'image'
-    filename += `imagecounter`
-    filename += '_'
-    filename += `subimagecounter`
-    filename += '.jpg'
+    # Set message to initialise
+    Message = "Initialise"
 
-    # Set message to get ready
-    Message = "Get Ready!"
-
-    # Update display to reflect new message
+    # Update display to reflect message
     update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
-    # Wait for 2 seconds
-    time.sleep(1)
-
-    # Capture image
-    Camera.capture(imagefolder, filename)
-
-    # Add an image element to the dictionary
-    im[shotscountdown] = PIL.Image.open(os.path.join(imagefolder, filename)).transpose(Image.FLIP_LEFT_RIGHT)
-
-    # Set timepulse to 999
-    timepulse = 999
+    # Procedure checks if a numerical folder exists, if it does pick the next number
+    # each start gets a new folder i.e. /photobooth/1/ etc
+    ExternalStorage.folder_check(imagefolder)
 
     # Set message to empty
     Message = ""
 
-# Call image processing function and pass in dictionary containing all images
-ImageProcessing.image_processing(im, background_template_location, imagefolder, imagecounter)
+    # Update display to reflect message
+    update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
-# Call print function to print photos
-# Print function not required for this project so commented out
-# Print(TotalImageCount)
+    # Main Loop
+    while closeme:
+        try:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    closeme = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        closeme = False
+        except KeyboardInterrupt:
+            closeme = False
 
-# Clear message variable
-Message = "All Done! Press button to start again!"
+        # input_value is the shuttergp
+        gpio.setup(22, gpio.IN)
+        input_value = gpio.input(22)
+        # input_value2 is photo reprint
+        gpio.setup(24, gpio.IN)
+        input_value2 = gpio.input(24)
 
-# Update display
-update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
+    # Update display to reflect changes
+    update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
-# Set timepulse to 999
-timepulse = 999
+    # Reprint Button has been pressed
+    if input_value2 == False:
+        # If the temp image exists send it to the printer
+        if os.path.isfile('/home/pi/Desktop/tempprint.jpg'):
+            # Call reprint function
+            Print.reprint()
+            # Wait 20 seconds
+            time.sleep(20)
+            # Set message to empty
+            Message = ""
+            # Update display to reflect changes
+            update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
-# Reset the shutter switch
-while input_value == False:
-    input_value = gpio.input(22)
+    # input_value is the shutter release
+    if input_value == False:
+        subimagecounter = 0
 
-# Stop preview
-Camera.stop_preview()
+    imagecounter = 0
+
+    # Increment the image number
+    imagecounter + 1
+
+    # Initialise number of shots variable
+    shotscountdown = 4
+
+    # Define empty dictionary for image variable data
+    im = {}
+
+    # Keep running until number of shots taken is 5
+    for shotscountdown in range(1, 6):
+        if shotscountdown == 1:
+            Message = "First Photo!"
+        elif shotscountdown == 2:
+            Message = "Second Photo!"
+        elif shotscountdown == 3:
+            Message = "Third Photo!"
+        elif shotscountdown == 4:
+            Message = "Forth Photo!"
+        elif shotscountdown == 5:
+            Message = "Last Photo!"
+        else:
+            exit()
+
+        # Update display
+        update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
+
+        # Wait for 1 second
+        time.sleep(1)
+
+        # Set message to be empty
+        Message = ""
+
+        # Keep running until countdown for photo is 0
+        for countdown in range(5, 0, -1):
+            # Display the countdown number
+            Numeral = str(countdown)
+            update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
+            # Flash the light at half second intervals
+            timepulse = 0.5
+            # Wait 1 second between beeps
+            time.sleep(1)
+            Numeral = ""
+
+        # increment the subimage
+        subimagecounter = subimagecounter + 1
+
+        # create the filename
+        filename = 'image'
+        filename += `imagecounter`
+        filename += '_'
+        filename += `subimagecounter`
+        filename += '.jpg'
+
+        # Set message to get ready
+        Message = "Get Ready!"
+
+        # Update display to reflect new message
+        update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
+
+        # Wait for 2 seconds
+        time.sleep(1)
+
+        # Capture image
+        Camera.capture(imagefolder, filename)
+
+        # Add an image element to the dictionary
+        im[shotscountdown] = PIL.Image.open(os.path.join(imagefolder, filename)).transpose(Image.FLIP_LEFT_RIGHT)
+
+        # Set timepulse to 999
+        timepulse = 999
+
+        # Set message to empty
+        Message = ""
+
+    # Call image processing function and pass in dictionary containing all images
+    ImageProcessing.image_processing(im, background_template_location, imagefolder, imagecounter)
+
+    # Call print function to print photos
+    # Print function not required for this project so commented out
+    # Print(TotalImageCount)
+
+    # Clear message variable
+    Message = "All Done! Press button to start!"
+
+    # Update display
+    update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
+
+    # Set timepulse to 999
+    timepulse = 999
+
+    # Reset the shutter switch
+    while input_value == False:
+        input_value = gpio.input(22)
+
+    # Stop preview
+    Camera.stop_preview()
 
 # Launch main thread
 Thread(target=main, args=('Main', 1)).start()
