@@ -210,7 +210,15 @@ def main(threadName, *args):
     # Print(TotalImageCount)
 
     # Clear message variable
-    Message = "All Done! Press button to start!"
+    Message = "All Done!"
+
+    # Update display
+    update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
+
+    time.sleep(5)
+
+    # Clear message variable
+    Message = "Press button to start!"
 
     # Update display
     update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
