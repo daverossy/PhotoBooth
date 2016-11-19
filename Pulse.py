@@ -1,9 +1,8 @@
 import time
-
+import RPi.GPIO as gpio
 
 # Pulse Thread - Used to pulse the LED without slowing down the rest
 def pulse(threadName, *args):
-    global gpio
     gpio.setup(17, gpio.OUT)
 
     while closeme:
