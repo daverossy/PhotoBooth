@@ -121,6 +121,22 @@ def main(threadName, *args):
                 # Update display to reflect changes
                 update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
+        # Clear message variable
+        Message = "Press button to start!"
+
+        # Update display
+        update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
+
+        # Set timepulse to 999
+        timepulse = 999
+
+        # Set start button to false
+        input_value = False
+
+        # Reset the shutter switch
+        while input_value == False:
+            input_value = gpio.input(22)
+
         # input_value is the shutter release
         if input_value == False:
             subimagecounter = 0
@@ -129,9 +145,6 @@ def main(threadName, *args):
 
         # Increment the image number
         imagecounter + 1
-
-        # Initialise number of shots variable
-        shotscountdown = 4
 
         # Define empty dictionary for image variable data
         im = {}
@@ -216,19 +229,6 @@ def main(threadName, *args):
         update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
         time.sleep(5)
-
-        # Clear message variable
-        Message = "Press button to start!"
-
-        # Update display
-        update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
-
-        # Set timepulse to 999
-        timepulse = 999
-
-        # Reset the shutter switch
-        while input_value == False:
-            input_value = gpio.input(22)
 
     # Stop preview
     Camera.stop_preview()
