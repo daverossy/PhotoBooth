@@ -88,6 +88,8 @@ def main(threadName, *args):
     # Update display to reflect message
     update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
+    closeme = True
+
     # Main Loop
     while closeme:
         try:
@@ -234,6 +236,8 @@ def main(threadName, *args):
 
     # Stop preview
     Camera.stop_preview()
+
+    pygame.quit()
 
 # Launch main thread
 Thread(target=main, args=('Main', 1)).start()
