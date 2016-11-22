@@ -243,7 +243,7 @@ def main(threadName, *args):
 Thread(target=main, args=('Main', 1)).start()
 
 # Launch pulse thread
-Thread(target=pulse, args=('Pulse', 1)).start()
+# Thread(target=pulse, args=('Pulse', 1)).start()
 
 # Sleep for 5 seconds
 time.sleep(5)
