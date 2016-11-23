@@ -4,7 +4,6 @@ from UpdateDisplay import update_display
 
 def initialise():
     Message = "USB Check..."
-    update_display(PhotosPerCart)
 
     # Following is a check to see there is a USB mounted if not it loops with a USB message
     usbcheck = False

@@ -80,7 +80,7 @@ def main(threadName, *args):
 
     # Procedure checks if a numerical folder exists, if it does pick the next number
     # each start gets a new folder i.e. /photobooth/1/ etc
-    folderno = ExternalStorage.folder_check(imagefolder)
+    ExternalStorage.folder_check(imagefolder)
 
     # Set message to empty
     Message = ""
@@ -226,8 +226,16 @@ def main(threadName, *args):
         # Print function not required for this project so commented out
         # Print(TotalImageCount)
 
-        # Clear message variable
+        # Set message variable
         Message = "All Done!"
+
+        # Update display
+        update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
+
+        time.sleep(5)
+
+        # Set message variable
+        Message = "Check the Hub for Photos!"
 
         # Update display
         update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
