@@ -23,7 +23,7 @@ def initialise():
                 if not os.path.isdir(imagefolder):
                     os.makedirs(imagefolder)
 
-    return
+    return imagefolder
 
 
 def folder_check(imagefolder):
