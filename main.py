@@ -70,7 +70,7 @@ def main(threadName, *args):
     Camera.start_preview()
 
     # Initialise the external storage
-    imagefolder = ExternalStorage.initialise()
+    Message, usbcheck, rootdir, imagedrive, imagefolder = ExternalStorage.initialise()
 
     # Set message to initialise
     Message = "Initialise"
@@ -80,7 +80,7 @@ def main(threadName, *args):
 
     # Procedure checks if a numerical folder exists, if it does pick the next number
     # each start gets a new folder i.e. /photobooth/1/ etc
-    ExternalStorage.folder_check(imagefolder)
+    folderno = ExternalStorage.folder_check(imagefolder)
 
     # Set message to empty
     Message = ""

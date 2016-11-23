@@ -4,7 +4,6 @@ from UpdateDisplay import update_display
 
 def initialise():
     Message = "USB Check..."
-    return Message
     update_display(PhotosPerCart)
 
     # Following is a check to see there is a USB mounted if not it loops with a USB message
@@ -23,7 +22,7 @@ def initialise():
                 if not os.path.isdir(imagefolder):
                     os.makedirs(imagefolder)
 
-    return imagefolder
+    return Message, usbcheck, rootdir, imagedrive, imagefolder
 
 
 def folder_check(imagefolder):
@@ -42,4 +41,4 @@ def folder_check(imagefolder):
 
     imagecounter = 0
 
-    return
+    return folderno
