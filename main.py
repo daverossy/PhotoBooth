@@ -70,7 +70,7 @@ def main(threadName, *args):
     Camera.start_preview()
 
     # Initialise the external storage
-    ExternalStorage.initialise()
+    imagefolder = ExternalStorage.initialise()
 
     # Set message to initialise
     Message = "Initialise"
@@ -162,7 +162,7 @@ def main(threadName, *args):
             elif shotscountdown == 3:
                 Message = "Third Photo!"
             elif shotscountdown == 4:
-                Message = "Forth Photo!"
+                Message = "Fourth Photo!"
             elif shotscountdown == 5:
                 Message = "Last Photo!"
             else:
