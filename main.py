@@ -220,7 +220,7 @@ def main(threadName, *args):
             Message = ""
 
         # Call image processing function and pass in dictionary containing all images
-        ImageProcessing.image_processing(im, background_template_location, imagefolder, imagecounter)
+        # ImageProcessing.image_processing(im, background_template_location, imagefolder, imagecounter)
 
         # Call print function to print photos
         # Print function not required for this project so commented out

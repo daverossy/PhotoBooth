@@ -16,7 +16,7 @@ def initialise():
             if not file == 'SETTINGS' and os.path.isdir(folder):
                 usbcheck = True
                 imagedrive = os.path.join(rootdir, file)
-                imagefolder = os.path.join(imagedrive, 'PhotoBooth')
+                imagefolder = os.path.join(imagedrive, 'PHOTOBOOTH')
                 # If a photobooth folder on the usb doesn't exist create it
                 if not os.path.isdir(imagefolder):
                     os.makedirs(imagefolder)
