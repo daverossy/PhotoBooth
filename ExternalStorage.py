@@ -40,4 +40,4 @@ def folder_check(imagefolder):
 
     imagecounter = 0
 
-    return folderno
+    return imagefolder
