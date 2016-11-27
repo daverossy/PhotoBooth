@@ -12,10 +12,14 @@ def initialise_camera():
     camera.vflip = False
     camera.hflip = True
     camera.rotation = 90
-    camera.brightness = 45
+    # camera.brightness = 45
     # camera.exposure_compensation = 6
     # camera.contrast = 8
     camera.resolution = (1280, 720)
+    camera.exposure_mode = 'antishake'
+    # camera.image_effect = ''
+    camera.led = False
+    camera.video_stabilization = True
     return
 
 

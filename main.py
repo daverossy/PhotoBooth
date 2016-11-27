@@ -154,16 +154,12 @@ def main(threadName, *args):
         im = {}
 
         # Keep running until number of shots taken is 5
-        for shotscountdown in range(1, 6):
+        for shotscountdown in range(1, 4):
             if shotscountdown == 1:
                 Message = "First Photo!"
             elif shotscountdown == 2:
                 Message = "Second Photo!"
             elif shotscountdown == 3:
-                Message = "Third Photo!"
-            elif shotscountdown == 4:
-                Message = "Fourth Photo!"
-            elif shotscountdown == 5:
                 Message = "Last Photo!"
             else:
                 exit()
@@ -204,8 +200,8 @@ def main(threadName, *args):
             # Update display to reflect new message
             update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
 
-            # Wait for 2 seconds
-            time.sleep(1)
+            # Wait for 0.5 seconds
+            time.sleep(0.5)
 
             # Capture image
             Camera.capture(imagefolder, filename)
