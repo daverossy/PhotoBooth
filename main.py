@@ -1,253 +1,167 @@
 import os
+import cups
 import time
-import PIL.Image
+import datetime
+import picamera
 import RPi.GPIO as gpio
 import pygame
-from PIL import Image
 from pygame.locals import *
-from threading import Thread
-
-# Imports from broken out functions
-from UpdateDisplay import update_display
-from Pulse import pulse
-import Print
-import ExternalStorage
-import ImageProcessing
-import Camera
-
-# Initialise global variables
-closeme = True  # Loop Control Variable
-timepulse = 999  # Pulse Rate of LED
-LEDon = False  # LED Flashing Control
-gpio.setmode(gpio.BCM)  # Set GPIO to BCM Layout
-Numeral = ""  # Numeral is the number display
-Message = ""  # Message is a fullscreen message
-SmallMessage = ""  # SmallMessage is a lower banner message
-TotalImageCount = 1  # Counter for Display and to monitor paper usage
-PhotosPerCart = 16  # Selphy takes 16 sheets per tray
-background_template_location = "/home/pi/Desktop/template.jpg"
-imagefolder = ""
-imagedriver = ""
-usbcheck = True
-subimagecounter = 0
-
-# Initialise pygame
-pygame.init()  # Initialise pygame
-screen = pygame.display.set_mode((1800, 1000), pygame.FULLSCREEN)  # Full screen 640x480
-background = pygame.Surface(screen.get_size())  # Create the background object
-background = background.convert()  # Convert it to a background
 
 
-# Main Thread
-def main(threadName, *args):
-    # Setup GPIO pins
-    gpio.setup(24, gpio.IN)  # Button on Pin 24 Reprints last image
-    gpio.setup(22, gpio.IN)  # Button on Pin 22 is the shutter
+class PhotoBooth(object):
+    gpio.setmode(gpio.BCM)  # Set GPIO to BCM Layout
+    gpio.setup(22, gpio.IN)  # Setup start button
 
-    # Setup global variables
-    global closeme
-    global timepulse
-    global TotalImageCount
-    global Numeral
-    global SmallMessage
-    global Message
+    def __init__(self):
+        self.camera = picamera.PiCamera()
+        self.pygame.init()
+        self.background
+        self.screen
+        self.count = 0
+        self.run = True
+        self.interrupt = False
+        self.folder_path = ''
 
-    subimagecounter = 0
+    def interface(self, function):
+        if function == 'start':
+            self.screen = pygame.display.set_mode((1800, 1000), pygame.FULLSCREEN)  # Full screen 1800x1000
+            self.background = pygame.Surface(self.screen.get_size())  # Create the background object
+            self.background = self.background.convert()  # Convert it to a background
+        elif function == 'stop':
+            pygame.quit()
 
-    # Update message to loading
-    Message = "Loading..."
+    def messages(self, font, message):
+        self.background.fill(pygame.Color("black"))  # Black background
+        large_font = pygame.font.Font(None, 800)
+        small_font = pygame.font.Font(None, 180)
+        if font == 'large':
+            text = large_font.render(message, 1, (255, 255, 255))
+        elif font == 'small':
+            text = small_font.render(message, 1, (255, 255, 255))
+        else:
+            text = small_font.render(message, 1, (255, 255, 255))
+        text_pos = text.get_rect()
+        text_pos.centerx = self.background.get_rect().centerx
+        text_pos.centery = self.background.get_rect().centery
+        self.background.blit(text, text_pos)
 
-    # Update display to reflect message
-    update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
+        self.screen.blit(self.background, (0, 0))
+        pygame.draw.rect(self.screen, pygame.Color(255, 255, 255), (10, 10, 1780, 980), 2)  # Draw the red outer box
+        pygame.display.flip()
 
-    # 5 Second delay to allow USB to mount
-    time.sleep(5)
+    def storage(self, function):
+        if function == 'initialise':
+            rootdir = '/media/'
+            dirs = os.listdir(rootdir)
+            print(dirs)
+        elif function == 'folder_path':
+            folder_path = 'something'
+            self.folder_path = folder_path
 
-    # Call camera initialisation function
-    Camera.initialise_camera()
+    def camera(self, function):
+        if function == 'initialise':
+            # Transparency allows py game to shine through
+            self.camera.preview_alpha = 120
+            self.camera.vflip = False
+            self.camera.hflip = True
+            self.camera.rotation = 90
+            self.camera.brightness = 45
+            # self.camera.exposure_compensation = 6
+            # self.camera.contrast = 8
+            self.camera.resolution = (1280, 720)
+        elif function == 'start':
+            self.camera.start_preview()
+        elif function == 'stop':
+            self.camera.stop_preview()
+        else:
+            exit()
 
-    # Start camera preview
-    Camera.start_preview()
+    @staticmethod
+    def button():
+        start_btn = gpio.input(22)
+        return start_btn
 
-    # Initialise the external storage
-    Message, usbcheck, rootdir, imagedrive, imagefolder = ExternalStorage.initialise()
+    def counter(self):
+        if self.count >= 5:
+            self.count = 0
+        self.count = self.count + 1
 
-    # Set message to initialise
-    Message = "Initialise"
-
-    # Update display to reflect message
-    update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
-
-    # Procedure checks if a numerical folder exists, if it does pick the next number
-    # each start gets a new folder i.e. /photobooth/1/ etc
-    imagefolder = ExternalStorage.folder_check(imagefolder)
-
-    # Set message to empty
-    Message = ""
-
-    # Update display to reflect message
-    update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
-
-    closeme = True
-
-    # Main Loop
-    while closeme:
-        try:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    closeme = False
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        closeme = False
-        except KeyboardInterrupt:
-            closeme = False
-
-        # input_value is the shuttergp
-        gpio.setup(22, gpio.IN)
-        input_value = gpio.input(22)
-        # input_value2 is photo reprint
-        gpio.setup(24, gpio.IN)
-        input_value2 = gpio.input(24)
-
-        # Update display to reflect changes
-        update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
-
-        # Reprint Button has been pressed
-        if input_value2 == False:
-            # If the temp image exists send it to the printer
-            if os.path.isfile('/home/pi/Desktop/tempprint.jpg'):
-                # Call reprint function
-                Print.reprint()
-                # Wait 20 seconds
-                time.sleep(20)
-                # Set message to empty
-                Message = ""
-                # Update display to reflect changes
-                update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
-
-        # Clear message variable
-        Message = "Press button to start!"
-
-        # Update display
-        update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
-
-        # Set timepulse to 999
-        timepulse = 999
-
-        # Set start button to false
-        input_value = False
-
-        # Reset the shutter switch
-        while input_value == False:
-            input_value = gpio.input(22)
-
-        # input_value is the shutter release
-        if input_value == False:
-            subimagecounter = 0
-
-        imagecounter = 0
-
-        # Increment the image number
-        imagecounter + 1
-
-        # Define empty dictionary for image variable data
-        im = {}
-
-        # Keep running until number of shots taken is 5
-        for shotscountdown in range(1, 4):
-            if shotscountdown == 1:
-                Message = "First Photo!"
-            elif shotscountdown == 2:
-                Message = "Second Photo!"
-            elif shotscountdown == 3:
-                Message = "Last Photo!"
-            else:
-                exit()
-
-            # Update display
-            update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
-
-            # Wait for 1 second
+    def countdown(self):
+        for countdown in range(5, 0, -1):
+            self.messages('small', str(countdown))
             time.sleep(1)
 
-            # Set message to be empty
-            Message = ""
+    def photo_count(self):
+        if self.counter == 1:
+            self.messages('small', 'First Photo!')
+        elif self.counter == 2:
+            self.messages('small', 'Second Photo!')
+        elif self.counter == 3:
+            self.messages('small', 'Last Photo!')
+        else:
+            self.messages('small', 'Unknown photo number.')
 
-            # Keep running until countdown for photo is 0
-            for countdown in range(5, 0, -1):
-                # Display the countdown number
-                Numeral = str(countdown)
-                update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
-                # Flash the light at half second intervals
-                timepulse = 0.5
-                # Wait 1 second between beeps
-                time.sleep(1)
-                Numeral = ""
+    @staticmethod
+    def filename():
+        ts = time.time()
+        filename = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        return filename
 
-            # increment the subimage
-            subimagecounter = subimagecounter + 1
+    def take_photo(self):
+        filename = self.filename()
+        folder = self.folder_path
+        self.camera.capture(os.path.join(folder, filename))
 
-            # create the filename
-            filename = 'image'
-            filename += `imagecounter`
-            filename += '_'
-            filename += `subimagecounter`
-            filename += '.jpg'
+    @staticmethod
+    def image_processing():
+        print('collage')
 
-            # Set message to get ready
-            Message = "Get Ready!"
+    def print_photo(self):
+        conn = cups.Connection()
+        printers = conn.getPrinters()
+        printer_name = printers.keys()[0]
+        self.messages('small', 'Printing...')
+        print_queue_length = len(conn.getJobs())
+        if print_queue_length > 1:
+            self.messages('small', 'Print error.')
+            conn.enablePrinter(printer_name)
+        elif print_queue_length == 1:
+            self.messages('small', 'Print Queue Full!')
+            conn.enablePrinter(printer_name)
+        conn.printFile(printer_name, '/tmp/temp_print.jpg', "PhotoBooth", {})
+        time.sleep(20)
 
-            # Update display to reflect new message
-            update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
+    def interrupt(self):
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                self.interrupt = False
+            elif event.key == pygame.K_ESCAPE:
+                self.interrupt = False
+            else:
+                self.interrupt = True
 
-            # Wait for 0.5 seconds
-            time.sleep(0.5)
+    def run(self):
+        self.interface(function='start')
+        self.camera(function='initialise')
+        self.storage(function='initialise')
+        self.camera(function='start')
 
-            # Capture image
-            Camera.capture(imagefolder, filename)
+        while self.run:
+            if not self.interrupt:
+                self.run = False
+                self.interface(function='stop')
+            elif self.interrupt:
+                self.run = True
 
-            # Add an image element to the dictionary
-            im[shotscountdown] = PIL.Image.open(os.path.join(imagefolder, filename)).transpose(Image.FLIP_LEFT_RIGHT)
+                self.messages('small', 'Press button to start!')
+                if self.button():
+                    while self.count < 5:
+                        self.counter()
+                        self.photo_count()
+                        self.countdown()
+                        self.take_photo()
+                        if self.count > 5:
+                            self.messages('small', 'All Done!')
 
-            # Set timepulse to 999
-            timepulse = 999
 
-            # Set message to empty
-            Message = ""
-
-        # Call image processing function and pass in dictionary containing all images
-        # ImageProcessing.image_processing(im, background_template_location, imagefolder, imagecounter)
-
-        # Call print function to print photos
-        # Print function not required for this project so commented out
-        # Print(TotalImageCount)
-
-        # Set message variable
-        Message = "All Done!"
-
-        # Update display
-        update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
-
-        time.sleep(2)
-
-        # Set message variable
-        Message = "Check the Hub for Photos!"
-
-        # Update display
-        update_display(TotalImageCount, Numeral, Message, PhotosPerCart, screen, background, pygame)
-
-        time.sleep(5)
-
-    # Stop preview
-    Camera.stop_preview()
-
-    pygame.quit()
-
-# Launch main thread
-Thread(target=main, args=('Main', 1)).start()
-
-# Launch pulse thread
-# Thread(target=pulse, args=('Pulse', 1)).start()
-
-# Sleep for 5 seconds
-time.sleep(5)
+session = PhotoBooth()
