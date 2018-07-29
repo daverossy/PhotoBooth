@@ -2,7 +2,7 @@ import datetime
 import os
 import time
 import RPi.GPIO as gpio
-import pycups
+import cups
 import picamera
 import pygame
 import threading
@@ -12,21 +12,19 @@ class PhotoBooth(threading.Thread):
     gpio.setmode(gpio.BCM)  # Set GPIO to BCM Layout
     gpio.setup(22, gpio.IN)  # Setup start button
     gpio.setup(24, gpio.OUT)  # Setup start button
+    camera = picamera.PiCamera()
+    pygame.init()
+    count = 0
+    run = True
+    interrupt = False
+    folder_path = ''
+    light_on = True
 
     def __init__(self):
         threading.Thread.__init__(self)
         light_thread = threading.Thread(target=self.light())
         light_thread.daemon = True
         light_thread.start()
-        self.camera = picamera.PiCamera()
-        self.pygame.init()
-        self.background
-        self.screen
-        self.count = 0
-        self.run = True
-        self.interrupt = False
-        self.folder_path = ''
-        self.light_on = True
 
     def interface(self, function):
         if function == 'start':
@@ -130,7 +128,7 @@ class PhotoBooth(threading.Thread):
         print('collage')
 
     def print_photo(self):
-        conn = pycups.Connection()
+        conn = cups.Connection()
         printers = conn.getPrinters()
         printer_name = printers.keys()[0]
         self.messages('small', 'Printing...')

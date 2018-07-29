@@ -1,6 +1,5 @@
 from . import PhotoBooth
 
 
-def main():
-    session = PhotoBooth()
-    session.run()
+session = PhotoBooth()
+session.run()
