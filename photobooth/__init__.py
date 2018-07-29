@@ -25,19 +25,6 @@ class PhotoBooth(threading.Thread):
     camera.resolution = (1280, 720)
 
     def __init__(self):
-        threading.Thread.__init__(self)
-
-        self.light_thread = threading.Thread(target=self.light())
-        self.light_thread.daemon = True
-        self.light_thread.start()
-
-        self.camera_thread = threading.Thread(target=self.camera(mode='start'))
-        self.camera_thread.daemon = True
-        self.camera_thread.start()
-
-        self.screen = pygame.display.set_mode((1800, 1000), pygame.FULLSCREEN)  # Full screen 1800x1000
-        self.background = pygame.Surface(self.screen.get_size())  # Create the background object
-        self.background = self.background.convert()  # Convert it to a background
         self.interrupt = False
         self.run = True
 
@@ -158,12 +145,20 @@ class PhotoBooth(threading.Thread):
         self.storage(mode='initialise')
         while self.run:
             self.check_interrupt()
+            self.light_thread = threading.Thread(target=self.light())
+            self.light_thread.daemon = True
+            self.light_thread.start()
+            self.camera_thread = threading.Thread(target=self.camera(mode='start'))
+            self.camera_thread.daemon = True
+            self.camera_thread.start()
+            self.screen = pygame.display.set_mode((1800, 1000), pygame.FULLSCREEN)  # Full screen 1800x1000
+            self.background = pygame.Surface(self.screen.get_size())  # Create the background object
+            self.background = self.background.convert()  # Convert it to a background
             if not self.interrupt:
                 self.run = False
                 self.interface(mode='stop')
             elif self.interrupt:
                 self.run = True
-
                 self.messages('small', 'Press button to start!')
                 if self.button():
                     while self.count < 5:
