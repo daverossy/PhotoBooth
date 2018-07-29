@@ -25,6 +25,9 @@ class PhotoBooth(threading.Thread):
     camera.resolution = (1280, 720)
     interrupt = False
     run = True
+    screen = pygame.display.set_mode((1800, 1000), pygame.FULLSCREEN)  # Full screen 1800x1000
+    background = pygame.Surface(screen.get_size())  # Create the background object
+    background = background.convert()  # Convert it to a background
 
     @staticmethod
     def interface(mode):
@@ -142,9 +145,6 @@ class PhotoBooth(threading.Thread):
     def main(self):
         self.storage(mode='initialise')
         while self.run:
-            self.screen = pygame.display.set_mode((1800, 1000), pygame.FULLSCREEN)  # Full screen 1800x1000
-            self.background = pygame.Surface(self.screen.get_size())  # Create the background object
-            self.background = self.background.convert()  # Convert it to a background
             self.light_thread = threading.Thread(target=self.light())
             self.light_thread.daemon = True
             self.light_thread.start()
