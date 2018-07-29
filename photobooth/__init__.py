@@ -15,23 +15,23 @@ class PhotoBooth(threading.Thread):
     camera = picamera.PiCamera()
     pygame.init()
     count = 0
-    run = True
-    interrupt = False
     folder_path = ''
     light_on = True
 
     def __init__(self):
         threading.Thread.__init__(self)
-        light_thread = threading.Thread(target=self.light())
-        light_thread.daemon = True
-        light_thread.start()
+        self.light_thread = threading.Thread(target=self.light())
+        self.light_thread.daemon = True
+        self.light_thread.start()
+        self.screen = pygame.display.set_mode((1800, 1000), pygame.FULLSCREEN)  # Full screen 1800x1000
+        self.background = pygame.Surface(self.screen.get_size())  # Create the background object
+        self.background = self.background.convert()  # Convert it to a background
+        self.interrupt = False
+        self.run = True
 
-    def interface(self, function):
-        if function == 'start':
-            self.screen = pygame.display.set_mode((1800, 1000), pygame.FULLSCREEN)  # Full screen 1800x1000
-            self.background = pygame.Surface(self.screen.get_size())  # Create the background object
-            self.background = self.background.convert()  # Convert it to a background
-        elif function == 'stop':
+    @staticmethod
+    def interface(mode):
+        if mode == 'stop':
             pygame.quit()
 
     def messages(self, font, message):
@@ -53,17 +53,17 @@ class PhotoBooth(threading.Thread):
         pygame.draw.rect(self.screen, pygame.Color(255, 255, 255), (10, 10, 1780, 980), 2)  # Draw the red outer box
         pygame.display.flip()
 
-    def storage(self, function):
-        if function == 'initialise':
-            rootdir = '/media/'
-            dirs = os.listdir(rootdir)
+    def storage(self, mode):
+        if mode == 'initialise':
+            root_dir = '/media/'
+            dirs = os.listdir(root_dir)
             print(dirs)
-        elif function == 'folder_path':
+        elif mode == 'folder_path':
             folder_path = 'something'
             self.folder_path = folder_path
 
-    def camera(self, function):
-        if function == 'initialise':
+    def camera(self, mode):
+        if mode == 'initialise':
             # Transparency allows py game to shine through
             self.camera.preview_alpha = 120
             self.camera.vflip = False
@@ -73,9 +73,9 @@ class PhotoBooth(threading.Thread):
             # self.camera.exposure_compensation = 6
             # self.camera.contrast = 8
             self.camera.resolution = (1280, 720)
-        elif function == 'start':
+        elif mode == 'start':
             self.camera.start_preview()
-        elif function == 'stop':
+        elif mode == 'stop':
             self.camera.stop_preview()
         else:
             exit()
@@ -91,6 +91,7 @@ class PhotoBooth(threading.Thread):
         while not gpio.input(22, gpio.IN):
             self.light_on = True
         self.light_on = False
+        return True
 
     def counter(self):
         if self.count >= 5:
@@ -142,7 +143,7 @@ class PhotoBooth(threading.Thread):
         conn.printFile(printer_name, '/tmp/temp_print.jpg', "PhotoBooth", {})
         time.sleep(20)
 
-    def interrupt(self):
+    def check_interrupt(self):
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 self.interrupt = False
@@ -151,16 +152,17 @@ class PhotoBooth(threading.Thread):
             else:
                 self.interrupt = True
 
-    def run(self):
-        self.interface(function='start')
-        self.camera(function='initialise')
-        self.storage(function='initialise')
-        self.camera(function='start')
+    def main(self):
+        self.interface(mode='start')
+        self.camera(mode='initialise')
+        self.storage(mode='initialise')
+        self.camera(mode='start')
 
         while self.run:
+            self.check_interrupt()
             if not self.interrupt:
                 self.run = False
-                self.interface(function='stop')
+                self.interface(mode='stop')
             elif self.interrupt:
                 self.run = True
 
@@ -173,3 +175,7 @@ class PhotoBooth(threading.Thread):
                         self.take_photo()
                         if self.count > 5:
                             self.messages('small', 'All Done!')
+
+
+session = PhotoBooth()
+session.main()
