@@ -161,6 +161,3 @@ class PhotoBooth(object):
                         self.take_photo()
                         if self.count > 5:
                             self.messages('small', 'All Done!')
-
-
-session = PhotoBooth()
