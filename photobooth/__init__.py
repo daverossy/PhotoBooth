@@ -12,11 +12,17 @@ class PhotoBooth(threading.Thread):
     gpio.setmode(gpio.BCM)  # Set GPIO to BCM Layout
     gpio.setup(22, gpio.IN)  # Setup start button
     gpio.setup(24, gpio.OUT)  # Setup start button
-    camera = picamera.PiCamera()
     pygame.init()
     count = 0
     folder_path = ''
     light_on = True
+    camera = picamera.PiCamera()
+    camera.preview_alpha = 120
+    camera.vflip = False
+    camera.hflip = True
+    camera.rotation = 90
+    camera.brightness = 45
+    camera.resolution = (1280, 720)
 
     def __init__(self):
         threading.Thread.__init__(self)
@@ -63,17 +69,7 @@ class PhotoBooth(threading.Thread):
             self.folder_path = folder_path
 
     def camera(self, mode):
-        if mode == 'initialise':
-            # Transparency allows py game to shine through
-            self.camera.preview_alpha = 120
-            self.camera.vflip = False
-            self.camera.hflip = True
-            self.camera.rotation = 90
-            self.camera.brightness = 45
-            # self.camera.exposure_compensation = 6
-            # self.camera.contrast = 8
-            self.camera.resolution = (1280, 720)
-        elif mode == 'start':
+        if mode == 'start':
             self.camera.start_preview()
         elif mode == 'stop':
             self.camera.stop_preview()
@@ -153,7 +149,6 @@ class PhotoBooth(threading.Thread):
                 self.interrupt = True
 
     def main(self):
-        self.interface(mode='start')
         self.camera(mode='initialise')
         self.storage(mode='initialise')
         self.camera(mode='start')
