@@ -2,7 +2,7 @@ import datetime
 import os
 import time
 import RPi.GPIO as gpio
-import cups
+import pycups
 import picamera
 import pygame
 
@@ -116,7 +116,7 @@ class PhotoBooth(object):
         print('collage')
 
     def print_photo(self):
-        conn = cups.Connection()
+        conn = pycups.Connection()
         printers = conn.getPrinters()
         printer_name = printers.keys()[0]
         self.messages('small', 'Printing...')
