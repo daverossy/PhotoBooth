@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='PhotoBooth',
     version='1.0',
-    packages=[''],
+    packages=['photobooth'],
     install_requires=[
         'picamera',
         'pygame',
@@ -12,6 +12,7 @@ setup(
         'time',
         'os',
         'datetime',
+        'threading',
     ],
     url='http://github.com/daverossy/PhotoBooth',
     license='MIT',

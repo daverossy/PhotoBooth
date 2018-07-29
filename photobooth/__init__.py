@@ -5,13 +5,19 @@ import RPi.GPIO as gpio
 import pycups
 import picamera
 import pygame
+import threading
 
 
-class PhotoBooth(object):
+class PhotoBooth(threading.Thread):
     gpio.setmode(gpio.BCM)  # Set GPIO to BCM Layout
     gpio.setup(22, gpio.IN)  # Setup start button
+    gpio.setup(24, gpio.OUT)  # Setup start button
 
     def __init__(self):
+        threading.Thread.__init__(self)
+        light_thread = threading.Thread(target=self.light())
+        light_thread.daemon = True
+        light_thread.start()
         self.camera = picamera.PiCamera()
         self.pygame.init()
         self.background
@@ -20,6 +26,7 @@ class PhotoBooth(object):
         self.run = True
         self.interrupt = False
         self.folder_path = ''
+        self.light_on = True
 
     def interface(self, function):
         if function == 'start':
@@ -75,10 +82,17 @@ class PhotoBooth(object):
         else:
             exit()
 
-    @staticmethod
-    def button():
-        start_btn = gpio.input(22)
-        return start_btn
+    def light(self):
+        while self.light_on:
+            gpio.output(24, gpio.HIGH)
+            time.sleep(1)
+            gpio.output(24, gpio.LOW)
+            time.sleep(1)
+
+    def button(self):
+        while not gpio.input(22, gpio.IN):
+            self.light_on = True
+        self.light_on = False
 
     def counter(self):
         if self.count >= 5:

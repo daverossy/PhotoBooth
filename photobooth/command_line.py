@@ -2,4 +2,5 @@ from . import PhotoBooth
 
 
 def main():
-    PhotoBooth()
+    session = PhotoBooth()
+    session.run()
