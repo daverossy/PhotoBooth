@@ -26,9 +26,15 @@ class PhotoBooth(threading.Thread):
 
     def __init__(self):
         threading.Thread.__init__(self)
+
         self.light_thread = threading.Thread(target=self.light())
         self.light_thread.daemon = True
         self.light_thread.start()
+
+        self.camera_thread = threading.Thread(target=self.camera(mode='start'))
+        self.camera_thread.daemon = True
+        self.camera_thread.start()
+
         self.screen = pygame.display.set_mode((1800, 1000), pygame.FULLSCREEN)  # Full screen 1800x1000
         self.background = pygame.Surface(self.screen.get_size())  # Create the background object
         self.background = self.background.convert()  # Convert it to a background
@@ -149,10 +155,7 @@ class PhotoBooth(threading.Thread):
                 self.interrupt = True
 
     def main(self):
-        self.camera(mode='initialise')
         self.storage(mode='initialise')
-        self.camera(mode='start')
-
         while self.run:
             self.check_interrupt()
             if not self.interrupt:
