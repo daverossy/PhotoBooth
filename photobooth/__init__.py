@@ -29,6 +29,7 @@ class PhotoBooth(threading.Thread):
             pygame.quit()
 
     def messages(self, font, message):
+        pygame.init()
         self.background.fill(pygame.Color("black"))  # Black background
         large_font = pygame.font.Font(None, 800)
         small_font = pygame.font.Font(None, 180)
@@ -77,7 +78,7 @@ class PhotoBooth(threading.Thread):
             time.sleep(1)
 
     def button(self):
-        while not gpio.input(22, gpio.IN):
+        while not gpio.input(22):
             self.light_on = True
         self.light_on = False
         return True
