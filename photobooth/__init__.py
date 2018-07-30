@@ -10,21 +10,15 @@ import threading
 
 class PhotoBooth(threading.Thread):
     gpio.setmode(gpio.BCM)  # Set GPIO to BCM Layout
-    gpio.setup(22, gpio.IN)  # Setup start button
-    gpio.setup(24, gpio.OUT)  # Setup start button
+    gpio.setup(22, gpio.IN)  # Setup start button pin
+    gpio.setup(24, gpio.OUT)  # Setup start button LED pin
     pygame.init()
     count = 0
     folder_path = ''
     light_on = True
-    camera = picamera.PiCamera()
-    camera.preview_alpha = 120
-    camera.vflip = False
-    camera.hflip = True
-    camera.rotation = 90
-    camera.brightness = 45
-    camera.resolution = (1280, 720)
     interrupt = False
     run = True
+    camera_status = True
     screen = pygame.display.set_mode((1800, 1000), pygame.FULLSCREEN)  # Full screen 1800x1000
     background = pygame.Surface(screen.get_size())  # Create the background object
     background = background.convert()  # Convert it to a background
@@ -62,13 +56,18 @@ class PhotoBooth(threading.Thread):
             folder_path = 'something'
             self.folder_path = folder_path
 
-    def camera(self, mode):
-        if mode == 'start':
-            self.camera.start_preview()
-        elif mode == 'stop':
-            self.camera.stop_preview()
+    def camera(self):
+        camera = picamera.PiCamera()
+        if self.camera_status:
+            camera.preview_alpha = 120
+            camera.vflip = False
+            camera.hflip = True
+            camera.rotation = 90
+            camera.brightness = 45
+            camera.resolution = (1280, 720)
+            camera.start_preview()
         else:
-            exit()
+            camera.stop_preview()
 
     def light(self):
         while self.light_on:
@@ -135,37 +134,29 @@ class PhotoBooth(threading.Thread):
 
     def check_interrupt(self):
         for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                self.interrupt = False
-            elif event.key == pygame.K_ESCAPE:
-                self.interrupt = False
-            else:
-                self.interrupt = True
+            if event.type == pygame.KEYDOWN or pygame.K_ESCAPE:
+                self.interface(mode='stop')
 
     def main(self):
         self.storage(mode='initialise')
         while self.run:
-            self.light_thread = threading.Thread(target=self.light())
-            self.light_thread.daemon = True
-            self.light_thread.start()
-            self.camera_thread = threading.Thread(target=self.camera(mode='start'))
-            self.camera_thread.daemon = True
-            self.camera_thread.start()
+            light_thread = threading.Thread(target=self.light())
+            light_thread.daemon = True
+            light_thread.start()
+            camera_thread = threading.Thread(target=self.camera())
+            camera_thread.daemon = True
+            camera_thread.start()
             self.check_interrupt()
-            if not self.interrupt:
-                self.run = False
-                self.interface(mode='stop')
-            elif self.interrupt:
-                self.run = True
-                self.messages('small', 'Press button to start!')
-                if self.button():
-                    while self.count < 5:
-                        self.counter()
-                        self.photo_count()
-                        self.countdown()
-                        self.take_photo()
-                        if self.count > 5:
-                            self.messages('small', 'All Done!')
+            self.run = True
+            self.messages('small', 'Press button to start!')
+            if self.button():
+                while self.count < 5:
+                    self.counter()
+                    self.photo_count()
+                    self.countdown()
+                    self.take_photo()
+                    if self.count > 5:
+                        self.messages('small', 'All Done!')
 
 
 session = PhotoBooth()
